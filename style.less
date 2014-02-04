@@ -1,0 +1,94 @@
+@import "common.less";
+@background-color: #00a651;
+@card-width: 200px;
+@card-height: 300px;
+@round-radius: 7px;
+@card-margin: 5px;
+@card-padding: 5px;
+@card-bottom-gap: 5px;
+@card-bottom-font: 35px;
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: @background-color;
+}
+
+.card {
+  position: relative;
+  width: @card-width;
+  height: @card-height;
+  background: white;
+  .border-radius (@round-radius);
+  .box-shadow(0px -3px 17px 0px rgba(50, 50, 50, 0.76));
+  margin: @card-margin;
+  padding: @card-padding;
+  p {
+    text-align: center;
+    font: ~"@{card-width}/@{card-height}" Georgia, Times New Roman, serif;
+    font-weight: lighter;
+  }
+  &:after {
+    position: absolute;
+    font-size: @card-bottom-font;
+    right: @card-bottom-gap;
+    bottom: @card-bottom-gap;
+  }
+  &:before {
+    position: absolute;
+    font-size: @card-bottom-font;
+    left: @card-bottom-gap;
+    top: @card-bottom-gap;
+  }
+}
+
+/*
+ * This is beautiful. powerful usage of less-loops with lists.
+ * expunge mundane.
+ * http://stackoverflow.com/questions/14493439/less-repeat-selector-declaration-inside-a-mixin/14504373#14504373
+*/
+@card-values: A, J, K, 10, 9, 8, 7, 6, 5, 4, 3, 2;
+@len-counter: length(@card-values);
+.loop(@len-counter);
+
+.loop(@len-counter) when (@len-counter > 0) {
+  @class: extract(@card-values, @len-counter);
+  //using v_ prefix for card values. It seems pure numeric class values are note supported
+  .v_@{class} {
+    p {
+      &:after {
+        content: "@{class}";
+      }
+    }
+  }
+  .loop((@len-counter - 1)); // next iteration
+}
+
+.diamond {
+  .card-fill("♦", red);
+}
+
+.club {
+  .card-fill("♣", black);
+}
+
+.heart {
+  .card-fill("♥", red);
+}
+
+.spade {
+  .card-fill("♠", black);
+}
+
+.card-fill (@content, @color) {
+  color: @color;
+  &:before {
+    content: @content;
+  }
+  &:after {
+    content: @content;
+  }
+}
